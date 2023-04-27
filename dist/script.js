@@ -95,16 +95,219 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
+/* harmony import */ var _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/slider-main */ "./src/js/modules/slider/slider-main.js");
 /* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
+/* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
+/* harmony import */ var _modules_difference__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/difference */ "./src/js/modules/difference.js");
+/* harmony import */ var _modules_form__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/form */ "./src/js/modules/form.js");
+
+
+
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  const slider = new _modules_slider__WEBPACK_IMPORTED_MODULE_0__["default"](".page", ".next");
+  const slider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    container: ".page",
+    btns: ".next"
+  });
   slider.render();
   const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__["default"](".showup .play", ".overlay");
   player.init();
+  const showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__["default"]({
+    container: ".showup__content-slider",
+    next: ".showup__next",
+    prev: ".showup__prev",
+    activeClass: "card-active",
+    animate: true
+  });
+  showUpSlider.init();
+  const modulesSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__["default"]({
+    container: ".modules__content-slider",
+    next: ".modules__info-btns .slick-next",
+    prev: ".modules__info-btns .slick-prev",
+    activeClass: "card-active",
+    animate: true,
+    autoplay: true
+  });
+  modulesSlider.init();
+  const feedSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__["default"]({
+    container: ".feed__slider",
+    next: ".feed__slider .slick-next",
+    prev: ".feed__slider .slick-prev",
+    activeClass: "feed__item-active",
+    autoplay: true
+  });
+  feedSlider.init();
+  new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"](".officerold", ".officernew", ".officer__card-item").init();
+  new _modules_form__WEBPACK_IMPORTED_MODULE_4__["default"](".form").init();
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/difference.js":
+/*!**************************************!*\
+  !*** ./src/js/modules/difference.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Difference; });
+class Difference {
+  constructor(oldOfficer, newOfficer, items) {
+    try {
+      this.oldOfficer = document.querySelector(oldOfficer);
+      this.newOfficer = document.querySelector(newOfficer);
+      this.items = items;
+      this.oldItems = this.oldOfficer.querySelectorAll(this.items);
+      this.newItems = this.newOfficer.querySelectorAll(this.items);
+      this.oldCounter = 0;
+      this.newCounter = 0;
+    } catch (error) {}
+  }
+  bindTriggers(container, counter, items) {
+    container.querySelector(".plus").addEventListener("click", () => {
+      if (counter !== items.length - 2) {
+        items[counter].style.display = "flex";
+        counter += 1;
+      } else {
+        items[counter].style.display = "flex";
+        items[items.length - 1].remove();
+      }
+    });
+  }
+  hideItems(items) {
+    items.forEach((item, i, arr) => {
+      if (i !== arr.length - 1) {
+        item.style.display = "none";
+      }
+    });
+  }
+  init() {
+    try {
+      this.hideItems(this.oldItems);
+      this.hideItems(this.newItems);
+      this.bindTriggers(this.oldOfficer, this.oldCounter, this.oldItems);
+      this.bindTriggers(this.newOfficer, this.newCounter, this.newItems);
+    } catch (error) {}
+  }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/form.js":
+/*!********************************!*\
+  !*** ./src/js/modules/form.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Form; });
+class Form {
+  constructor(forms) {
+    this.forms = document.querySelectorAll(forms);
+    this.inputs = document.querySelectorAll("input");
+    this.message = {
+      loading: "Загрузка",
+      success: "Спасибо! Мы скоро с вами свяжемся...",
+      failure: "Что-то пошло не так..."
+    };
+    this.path = "assets/question.php";
+  }
+  clearInputs() {
+    this.inputs.forEach(input => {
+      input.value = "";
+    });
+  }
+  validateInputs() {
+    const mailInputs = document.querySelectorAll('[type="email"]');
+    mailInputs.forEach(input => {
+      input.addEventListener("keypress", function (e) {
+        if (e.key.match(/[^a-z 0-9 @ \.]/gi)) {
+          e.preventDefault();
+        }
+      });
+    });
+  }
+  initMask() {
+    let setCursorPosition = (pos, elem) => {
+      elem.focus();
+      if (elem.setSelectionRange) {
+        elem.setSelectionRange(pos, pos);
+      } else if (elem.createTextRange) {
+        let range = elem.createTextRange();
+        range.collapse(true);
+        range.moveEnd("character", pos);
+        range.moveStart("character", pos);
+        range.select();
+      }
+    };
+    function createMask(event) {
+      let matrix = "+1 (___) ___-____",
+        i = 0,
+        def = matrix.replace(/\D/g, ""),
+        val = this.value.replace(/\D/g, "");
+      if (def.length >= val.length) {
+        val = def;
+      }
+      this.value = matrix.replace(/./g, function (a) {
+        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a;
+      });
+      if (event.type === "blur") {
+        if (this.value.length == 2) {
+          this.value = "";
+        }
+      } else {
+        setCursorPosition(this.value.length, this);
+      }
+    }
+    let inputs = document.querySelectorAll('[name="phone"]');
+    inputs.forEach(input => {
+      input.addEventListener("input", createMask);
+      input.addEventListener("focus", createMask);
+      input.addEventListener("blur", createMask);
+    });
+  }
+  async postData(url, data) {
+    let result = await fetch(url, {
+      method: "POST",
+      body: data
+    });
+    return await result.text();
+  }
+  init() {
+    this.validateInputs();
+    this.initMask();
+    this.forms.forEach(form => {
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        let statusMessage = document.createElement("div");
+        statusMessage.style.cssText = `
+				margin-top: 15px;
+				font-size: 18px;
+				color: grey;
+				`;
+        form.parentNode.appendChild(statusMessage);
+        statusMessage.textContent = this.message.loading;
+        const formData = new FormData(form);
+        this.postData(this.path, formData).then(res => {
+          console.log(res);
+          statusMessage.textContent = this.message.success;
+        }).catch(() => {
+          statusMessage.textContent = this.message.failure;
+        }).finally(() => {
+          this.clearInputs();
+          setTimeout(() => {
+            statusMessage.remove();
+          }, 6000);
+        });
+      });
+    });
+  }
+}
 
 /***/ }),
 
@@ -124,6 +327,24 @@ class VidePlayer {
     this.overlay = document.querySelector(overlay);
     this.close = this.overlay.querySelector(".close");
   }
+  bindTriggers() {
+    this.btns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (document.querySelector("iframe#frame")) {
+          this.overlay.style.display = "flex";
+        } else {
+          const path = btn.getAttribute("data-url");
+          this.createPlayer(path);
+        }
+      });
+    });
+  }
+  bindCloseTrigger() {
+    this.close.addEventListener("click", () => {
+      this.overlay.style.display = "none";
+      this.player.stopVideo();
+    });
+  }
   createPlayer(url) {
     this.player = new YT.Player("frame", {
       height: "100%",
@@ -137,13 +358,8 @@ class VidePlayer {
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    this.btns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const path = btn.getAttribute("data-url");
-        this.overlay.style.display = "block";
-        this.createPlayer(path);
-      });
-    });
+    this.bindTriggers();
+    this.bindCloseTrigger();
   }
 }
 
@@ -160,11 +376,47 @@ class VidePlayer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Slider; });
 class Slider {
-  constructor(page, btns) {
-    this.page = document.querySelector(page);
-    this.slides = this.page.children;
+  constructor() {
+    let {
+      container = null,
+      btns = null,
+      next = null,
+      prev = null,
+      activeClass = "",
+      animate,
+      autoplay
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    this.container = document.querySelector(container);
+    try {
+      this.slides = this.container.children;
+    } catch (e) {}
+    this.prev = document.querySelector(prev);
+    this.next = document.querySelector(next);
     this.btns = document.querySelectorAll(btns);
+    this.activeClass = activeClass;
+    this.animate = animate;
+    this.autoplay = autoplay;
     this.slideIndex = 1;
+  }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/slider-main.js":
+/*!**********************************************!*\
+  !*** ./src/js/modules/slider/slider-main.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MainSlider; });
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../slider */ "./src/js/modules/slider.js");
+
+class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(btns) {
+    super(btns);
   }
   showSlides(n) {
     if (n > this.slides.length) {
@@ -193,21 +445,88 @@ class Slider {
   }
   render() {
     try {
-      this.hanson = document.querySelector(".hanson");
-    } catch (e) {
-      console.log(e);
-    }
-    this.btns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        this.plusSlides(1);
+      try {
+        this.hanson = document.querySelector(".hanson");
+      } catch (e) {
+        console.log(e);
+      }
+      this.btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          this.plusSlides(1);
+        });
+        btn.parentNode.previousElementSibling.addEventListener("click", e => {
+          e.preventDefault();
+          this.slideIndex = 1;
+          this.showSlides(this.slideIndex);
+        });
       });
-      btn.parentNode.previousElementSibling.addEventListener("click", e => {
-        e.preventDefault();
-        this.slideIndex = 1;
-        this.showSlides(this.slideIndex);
-      });
+      this.showSlides(this.slideIndex);
+    } catch (error) {}
+  }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/slider-mini.js":
+/*!**********************************************!*\
+  !*** ./src/js/modules/slider/slider-mini.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MiniSlider; });
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../slider */ "./src/js/modules/slider.js");
+
+class MiniSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(container, next, prev, activeClass, animate, autoplay) {
+    super(container, next, prev, activeClass, animate, autoplay);
+  }
+  filteredSlides() {
+    return Array.prototype.filter.call(this.slides, slide => slide.tagName !== "BUTTON");
+  }
+  decorizedSlides() {
+    Array.prototype.forEach.call(this.slides, slide => {
+      slide.classList.remove(this.activeClass);
+      if (this.animate) {
+        slide.querySelector(".card__title").style.opacity = "0.4";
+        slide.querySelector(".card__controls-arrow").style.opacity = "0";
+      }
     });
-    this.showSlides(this.slideIndex);
+    this.filteredSlides()[0].classList.add(this.activeClass);
+    if (this.animate) {
+      this.slides[0].querySelector(".card__title").style.opacity = "1";
+      this.slides[0].querySelector(".card__controls-arrow").style.opacity = "1";
+    }
+  }
+  nextSlide() {
+    this.container.appendChild(this.filteredSlides()[0]);
+    this.decorizedSlides();
+  }
+  bindTriggers() {
+    this.next.addEventListener("click", () => this.nextSlide());
+    this.prev.addEventListener("click", () => {
+      this.container.prepend(this.filteredSlides()[this.filteredSlides().length - 1]);
+      this.decorizedSlides();
+    });
+  }
+  init() {
+    try {
+      this.container.style.cssText = `
+			display : flex ;
+			flex-wrap: wrap;
+			overflow: hidden;
+			align-items: flex-start;
+		`;
+      this.bindTriggers();
+      this.decorizedSlides();
+      if (this.autoplay) {
+        setInterval(() => {
+          this.nextSlide();
+        }, 5000);
+      }
+    } catch (error) {}
   }
 }
 

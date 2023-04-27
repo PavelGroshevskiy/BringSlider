@@ -5,6 +5,26 @@ export default class VidePlayer {
 		this.close = this.overlay.querySelector(".close");
 	}
 
+	bindTriggers() {
+		this.btns.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				if (document.querySelector("iframe#frame")) {
+					this.overlay.style.display = "flex";
+				} else {
+					const path = btn.getAttribute("data-url");
+					this.createPlayer(path);
+				}
+			});
+		});
+	}
+
+	bindCloseTrigger() {
+		this.close.addEventListener("click", () => {
+			this.overlay.style.display = "none";
+			this.player.stopVideo();
+		});
+	}
+
 	createPlayer(url) {
 		this.player = new YT.Player("frame", {
 			height: "100%",
@@ -21,13 +41,7 @@ export default class VidePlayer {
 		const firstScriptTag = document.getElementsByTagName("script")[0];
 		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-		this.btns.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				const path = btn.getAttribute("data-url");
-
-				this.overlay.style.display = "block";
-				this.createPlayer(path);
-			});
-		});
+		this.bindTriggers();
+		this.bindCloseTrigger();
 	}
 }
