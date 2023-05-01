@@ -5,11 +5,16 @@ import Difference from "./modules/difference";
 import Form from "./modules/form";
 
 window.addEventListener("DOMContentLoaded", () => {
-	const slider = new MainSlider({ container: ".page", btns: ".next" });
-	slider.render();
+	new MainSlider({ container: ".page", btns: ".next" }).render();
 
-	const player = new VidePlayer(".showup .play", ".overlay");
-	player.init();
+	const modulePageSlider = new MainSlider({
+		container: ".moduleapp",
+		btns: ".next",
+	});
+	modulePageSlider.render();
+
+	new VidePlayer(".showup .play", ".overlay").init();
+	new VidePlayer(".module__video-item .play", ".overlay").init();
 
 	const showUpSlider = new MiniSlider({
 		container: ".showup__content-slider",
